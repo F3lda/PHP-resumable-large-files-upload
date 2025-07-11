@@ -15,6 +15,6 @@ if(isset($_GET["LARGE_UPLOAD"])){
     $ResUpload->show();
     echo '<hr><button onclick="window.location.href = \'./\';">< Home</button>';
 } else {
-	echo '<a href="./?LARGE_UPLOAD">UPLOAD</a>';
+    echo '<a href="./?LARGE_UPLOAD">UPLOAD</a>';
 }
 ?>

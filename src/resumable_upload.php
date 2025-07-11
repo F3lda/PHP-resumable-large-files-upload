@@ -8,7 +8,7 @@ Class ResumableLargeFilesUpload {
 
     private $upload_destination;
     private $bytes_per_chunk;
-	
+    
     private $action_param = 'action';
     private $data_param = 'data';
 
@@ -60,15 +60,15 @@ Class ResumableLargeFilesUpload {
                     break;
                 default:
                     return false;
-				return true;
+                return true;
             }
         }
-		return false;
+        return false;
     }
-	
-	public function isRequested() {
-		return (isset($_GET[$this->action_param]) || isset($_GET[$this->data_param]));
-	}
+    
+    public function isRequested() {
+        return (isset($_GET[$this->action_param]) || isset($_GET[$this->data_param]));
+    }
 
     private function handleUpload() {
         
@@ -332,8 +332,8 @@ Class ResumableLargeFilesUpload {
         
         return $base_url;
     }
-	
-	private function getCurrentUrlWithoutAllParams() {
+    
+    private function getCurrentUrlWithoutAllParams() {
         $url_parts = parse_url($_SERVER['REQUEST_URI']);
         $base_url = $url_parts['path'];
         
@@ -863,7 +863,7 @@ Class ResumableLargeFilesUpload {
     </html>
         <?php
     }
-	
+    
 }
 
 ?>
