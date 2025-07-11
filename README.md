@@ -1,71 +1,84 @@
 # Resumable Large Files Upload
 
-A PHP-based chunked file upload system with resume capability, progress tracking, and integrity verification.
+A PHP class for uploading large files with resume capability, chunked transfer, and file management.
 
 ## Features
 
-- **Chunked Upload**: Configurable chunk size (default 30MB)
-- **Resume Capability**: Continues interrupted uploads
-- **Progress Tracking**: Real-time speed and time estimates
-- **Integrity Check**: SHA-1 checksum verification
-- **Modular Design**: Easy integration
+- Resumable uploads with chunked transfer
+- Real-time progress tracking and speed calculation
+- SHA-1 checksum validation
+- Delete incomplete/completed uploads
+- Configurable parameter prefixes
+- Security protections
 
 ## Quick Start
 
 ```php
 <?php
-$upload_destination = './'; // Optional: custom upload path
-include('./src/resumable_upload.php');
+require_once('./resumable_upload.php');
 
-if (isset($_GET['UPLOAD'])) {
-    useResumableUpload();
-} else {
-    echo '<a href="./?UPLOAD">UPLOAD</a>';
+// Initialize with parameter prefix and upload directory
+$ResUpload = new ResumableLargeFilesUpload('TEFIS_', './PRIVATE/');
+
+// Handle upload requests
+if(isset($_GET["LARGE_UPLOAD"]) && $ResUpload->isRequested()) {
+    $ResUpload->handleRequest();
+    die();
+}
+
+// Show upload interface
+if(isset($_GET["LARGE_UPLOAD"])){
+    $ResUpload->show();
+    echo '<hr><button onclick="window.location.href = \'./\';">< Home</button>';
 }
 ?>
 ```
 
-## Configuration
+## Constructor
 
 ```php
-$upload_destination = './uploads/'; // Upload directory
-$bytes_per_chunk = 10;              // Chunk size in MB (default: 30)
+new ResumableLargeFilesUpload($param_prefix, $upload_destination, $bytes_per_chunk)
 ```
+
+- **`$param_prefix`** (string) - URL parameter prefix (e.g., 'APP_')
+- **`$upload_destination`** (string) - Upload directory (default: './uploads/')
+- **`$bytes_per_chunk`** (int) - Chunk size in MB (default: 30)
+
+## URL Parameters
+
+With prefix `'TEFIS_'`:
+- `TEFIS_action` - Action type (upload, check, merge, delete, delete_completed)
+- `TEFIS_data` - Filename for delete operations
 
 ## File Structure
 
 ```
-your-project/
-├── index.php
-├── src/resumable_upload.php
-└── uploads/
-    ├── TEMP/           # Temporary chunks
-    └── file.ext        # Completed files
+uploads/
+├── TEMP/                    # Temporary chunks
+│   └── filename_ext---123/  # Chunk directory
+├── completed_file1.pdf      # Finished uploads
+└── completed_file2.zip
 ```
 
-## URL Parameters
+## Server Configuration
 
-- `?UPLOAD` - Show upload interface
-- `?action=upload` - Handle chunk upload
-- `?action=check` - Check existing files
-- `?action=merge` - Merge chunks
-- `?DELETE=filename` - Remove incomplete upload
+```php
+ini_set('upload_max_filesize', '1G');
+ini_set('post_max_size', '1G');
+ini_set('max_execution_time', 300);
+ini_set('memory_limit', '512M');
+```
 
-## Requirements
+## Key Methods
 
-- PHP 5.6+
-- Write permissions on upload directory
-- Modern browser with File API support
+```php
+$uploader->handleRequest();     // Process upload requests
+$uploader->isRequested();       // Check if request is for uploader
+$uploader->show();              // Display upload interface
+$uploader->getParamVariableNames(); // Get parameter names
+```
 
-## How It Works
-
-1. Check for existing files/chunks
-2. Upload file in chunks with progress
-3. Merge chunks into final file
-4. Verify with SHA-1 checksum
-5. Clean up temporary files
-
-### Notes
+## Notes
 
 Based on these repos:
 - https://github.com/ZiTAL/html5-file-upload-chunk
