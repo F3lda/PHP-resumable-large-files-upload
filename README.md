@@ -17,8 +17,8 @@ A PHP class for uploading large files with resume capability, chunked transfer, 
 <?php
 require_once('./resumable_upload.php');
 
-// Initialize with parameter prefix and upload directory
-$ResUpload = new ResumableLargeFilesUpload('TEFIS_', './PRIVATE/');
+// Initialize with parameter prefix, upload directory, chunk size, and threads
+$ResUpload = new ResumableLargeFilesUpload('TEFIS_', './PRIVATE/', 30, 5);
 
 // Handle upload requests
 if(isset($_GET["LARGE_UPLOAD"]) && $ResUpload->isRequested()) {
@@ -37,12 +37,13 @@ if(isset($_GET["LARGE_UPLOAD"])){
 ## Constructor
 
 ```php
-new ResumableLargeFilesUpload($param_prefix, $upload_destination, $bytes_per_chunk)
+new ResumableLargeFilesUpload($param_prefix, $upload_destination, $bytes_per_chunk, $upload_threads)
 ```
 
-- **`$param_prefix`** (string) - URL parameter prefix (e.g., 'APP_')
+- **`$param_prefix`** (string) - URL parameter prefix (default: '', e.g., 'APP_')
 - **`$upload_destination`** (string) - Upload directory (default: './uploads/')
 - **`$bytes_per_chunk`** (int) - Chunk size in MB (default: 30)
+- **`$upload_threads`** (int) - Number of upload threads (default: 3)
 
 ## URL Parameters
 
